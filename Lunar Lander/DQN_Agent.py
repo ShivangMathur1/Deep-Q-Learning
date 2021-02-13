@@ -76,7 +76,7 @@ class Agent(object):
             action = np.random.choice(self.actionSpace)
         else:
             state = T.tensor([observation]).to(self.DQN.device)
-            actions = self.DQN(state)
+            actions = self.DQN(state.float())
             action = T.argmax(actions).item()
 
         return action
@@ -117,7 +117,7 @@ class Agent(object):
 
     # Update exploration chance
     def updateEpsilon(self):
-        self.epsilon = self.epsilon * self.epsilonDecrease if self.epsilon > self.epsilonFinal else self.epsilonFinal
+        self.epsilon = self.epsilon - self.epsilonDecrease if self.epsilon > self.epsilonFinal else self.epsilonFinal
     
     def updateNetwork(self):
         self.DQNext.load_state_dict(self.DQN.state_dict())

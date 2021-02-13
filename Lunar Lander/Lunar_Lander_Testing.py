@@ -1,16 +1,11 @@
 import gym
-from Lunar_lander_agent import DQN
+from DQN_Agent import DQN
 import torch as T
-import numpy as np
 
 if __name__ =='__main__':
     env = gym.make('LunarLander-v2')
     DQN = DQN(lr=0.001, inputDims=[8], fc1Dims=256, fc2Dims=256, nActions=4)
     DQN.load_state_dict(T.load('./lunar-model.pt'))
-
-    scores = []
-    epsHistory = []
-    episodes = 500
 
     score = 0
     state = env.reset()

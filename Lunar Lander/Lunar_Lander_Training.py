@@ -1,5 +1,5 @@
 import gym
-from Lunar_lander_agent import Agent
+from DQN_Agent import Agent
 import torch as T
 import matplotlib.pyplot as plt
 import numpy as np
