@@ -1,2 +1,2 @@
-# Lunar-Lander
-Teaching an AI to land a spaceship safely using Double Deep Q-Learning in pytorch.
+# Deep Q-Learning
+An implementation of double deep Q-Learning tested on gym environments such as CartPole-v1 and LunarLander-v2.
