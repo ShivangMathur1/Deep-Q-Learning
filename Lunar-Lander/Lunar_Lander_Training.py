@@ -1,3 +1,4 @@
+import os
 import gym
 from DQN_Agent import Agent
 import torch as T
@@ -9,8 +10,9 @@ if __name__ =='__main__':
     brain = Agent(gamma=0.99, epsilon=1.0, batchSize=64, nActions=4, inputDims=[8], lr=0.001)
 
     scores = []
-    epsHistory = []
     episodes = 500
+    learn = True
+    quality = 0
 
     for i in range(episodes):
         score = 0
@@ -26,19 +28,35 @@ if __name__ =='__main__':
 
             score += reward
             brain.store(state, action, reward, stateNew, done)
-            brain.learn()
-            if i % 5 == 0 and i != 0:
-                brain.updateNetwork()
+            if learn:
+                brain.learn()
+                if i % 5 == 0 and i != 0:
+                    brain.updateNetwork()
+
             state = stateNew
         
         scores.append(score)
-        epsHistory.append(brain.epsilon)
 
         avgScore = np.mean(scores[-100:])
         print('Episode: ', i, '\tScore: ', score, '\tAverage Score: %.3f' % avgScore, 'Epsilon %.3f' % brain.epsilon)
 
-    T.save(brain.DQN.state_dict(), 'lunar-model.pt')
+        #Early stopping as soon as model performs successfully on 10 consecutive episodes
+        if score >= 200:
+            if learn:
+                quality += 1
+                learn = False
+            else:
+                quality += 1
+                if quality > 10:
+                    episodes = i + 1
+                    break
+        elif quality:
+            learn = True
+            quality = 0
 
+    checkpoint = {'model': brain.DQN.state_dict(), 'score': scores, 'episodes': episodes}
+    T.save(checkpoint, 'Lunar-Lander/lunar-model-dqn.pt')
+    print('Model Saved')
     x = [i + 1 for i in range(episodes)]
     plt.plot(x, scores)
     plt.show()
