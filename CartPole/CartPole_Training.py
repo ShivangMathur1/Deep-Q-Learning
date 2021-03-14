@@ -9,7 +9,6 @@ if __name__ =='__main__':
     brain = Agent(gamma=0.99, epsilon=1.0, batchSize=16, nActions=2, inputDims=[4], lr=0.001, memSize=50000)
 
     scores = []
-    epsHistory = []
     episodes = 200
     learn = True
     quality = 0
@@ -51,11 +50,8 @@ if __name__ =='__main__':
         elif quality:
             learn = True
             quality = 0
-        
 
         scores.append(score)
-        epsHistory.append(brain.epsilon)
-
         avgScore = np.mean(scores[-50:])
         print('Episode: ', i, '\tScore: ', score, '\tAverage Score: %.3f' % avgScore, 'Epsilon %.3f' % brain.epsilon)
 
