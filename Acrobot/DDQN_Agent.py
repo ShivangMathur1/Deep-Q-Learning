@@ -4,7 +4,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 import numpy as np
 
-# Deep Q Network Class
+# Double Deep Q Network Class
 class DQN(nn.Module):
     def __init__(self, lr, inputDims, fc1Dims, fc2Dims, nActions):
         super(DQN, self).__init__()
@@ -102,16 +102,18 @@ class Agent(object):
 
         # Forward DQN for this and the next state
         # Update target Q values of the whole batch
-        # Qtarget = reward + gamma*(q-value_for_best_action)
-        # We get index 0 as the max function returns a tuple (value, index)
-        qEval = self.DQN(stateBatch)[batchIndex, actionBatch]
+        # Qtarget = reward + gamma*(q-value_for_best_action_according_eval_network)
+
         qNext = self.DQNext(newStateBatch)
-        qTarget = rewardBatch + self.gamma * T.max(qNext, dim=1)[0]
+        qEval = self.DQN(newStateBatch)
+        bestFutureActions = T.argmax(qEval, dim=1).int().cpu().numpy()
+        qTarget = rewardBatch + self.gamma * qNext[batchIndex, bestFutureActions]
+        qPred = self.DQN(stateBatch)[batchIndex, actionBatch]
         qTarget[terminalBatch] = 0.0
 
         # Backpropagate the loss and Optimize
-        loss = self.DQN.loss(qTarget, qEval).to(self.DQN.device)
-        loss.backward();
+        loss = self.DQN.loss(qTarget, qPred).to(self.DQN.device)
+        loss.backward()
         self.DQN.optimizer.step()
         self.updateEpsilon()
 

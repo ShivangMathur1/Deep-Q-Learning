@@ -1,11 +1,11 @@
 import gym
-from DQN_Agent import DQN
+from DDQN_Agent import DQN
 import torch as T
 
 if __name__ =='__main__':
     env = gym.make('Acrobot-v1')
-    DQN = DQN(lr=0.001, inputDims=[6], fc1Dims=128, fc2Dims=128, nActions=3)
-    DQN.load_state_dict(T.load('./Acrobot/acrobot-model.pt'))
+    DQN = DQN(lr=0.001, inputDims=[6], fc1Dims=256, fc2Dims=256, nActions=3)
+    DQN.load_state_dict(T.load('Acrobot/acrobot-model-ddqn.pt')['model'])
 
     score = 0
     state = env.reset()
