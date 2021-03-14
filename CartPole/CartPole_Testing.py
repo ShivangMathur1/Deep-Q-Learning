@@ -1,5 +1,5 @@
 import gym
-from DQN_Agent import DQN
+from Agents.DQN_Agent import DQN
 import torch as T
 
 if __name__ =='__main__':

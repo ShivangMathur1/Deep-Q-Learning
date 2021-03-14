@@ -106,8 +106,8 @@ class Agent(object):
         # We get index 0 as the max function returns a tuple (value, index)
         qEval = self.DQN(stateBatch)[batchIndex, actionBatch]
         qNext = self.DQNext(newStateBatch)
-        qNext[terminalBatch] = 0.0
         qTarget = rewardBatch + self.gamma * T.max(qNext, dim=1)[0]
+        qTarget[terminalBatch] = 0.0
 
         # Backpropagate the loss and Optimize
         loss = self.DQN.loss(qTarget, qEval).to(self.DQN.device)

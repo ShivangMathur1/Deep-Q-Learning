@@ -1,5 +1,5 @@
 import gym
-from DQN_Agent import Agent
+from DDQN_Agent import Agent
 import torch as T
 import matplotlib.pyplot as plt
 import numpy as np
@@ -10,7 +10,7 @@ if __name__ =='__main__':
 
     scores = []
     epsHistory = []
-    episodes = 300
+    episodes = 200
     learn = True
     quality = 0
 
@@ -43,7 +43,8 @@ if __name__ =='__main__':
             else:
                 quality += 1
                 if quality > 5:
-                    T.save(brain.DQN.state_dict(), 'cartpole-model.pt')
+                    checkpoint = {'model': brain.DQN.state_dict(), 'score': scores, 'episodes': episodes}
+                    T.save(checkpoint, 'CartPole/cartpole-model-ddqn.pt')
                     print('Model Saved')
                     episodes = i
                     break
@@ -56,7 +57,7 @@ if __name__ =='__main__':
         epsHistory.append(brain.epsilon)
 
         avgScore = np.mean(scores[-50:])
-        print('Episode: ', i, '\tScore: ', score, '\tAverage Score: %.3f' % avgScore, 'Epsilon %.3f' % brain.epsilon, learn, quality)
+        print('Episode: ', i, '\tScore: ', score, '\tAverage Score: %.3f' % avgScore, 'Epsilon %.3f' % brain.epsilon)
 
     x = [i + 1 for i in range(episodes)]
     plt.plot(x, scores)
